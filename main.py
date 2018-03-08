@@ -4,6 +4,7 @@
 import pygame
 from pygame.locals import *
 from sys import exit
+import traceback
 
 def main():
 	pygame.mixer.pre_init()
@@ -14,7 +15,13 @@ def main():
 	screen = pygame.display.set_mode(bg_size)
 	pygame.display.set_caption("AircraftWar")
 
+	background = pygame.image.load('images/background.png').convert()
+
+	pygame.mixer.music.load('sound/game_music.ogg')
+	pygame.mixer.music.set_volume(0.2)
+
 	clock = pygame.time.Clock()
+	pygame.mixer.music.play()
 
 	running = True
 
@@ -23,7 +30,7 @@ def main():
 			if event.type == QUIT:
 				exit()
 
-		screen.fill( (255, 255, 255) )
+		screen.blit( background,(0, 0) )
 		clock.tick(60)
 
 		#pygame.display.flip()
@@ -36,4 +43,6 @@ if __name__ == "__main__":
 	except SystemExit:
 		pass
 	except:
+		traceback.print_exc()
 		pygame.quit()
+		#input()
