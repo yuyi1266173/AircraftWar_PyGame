@@ -5,6 +5,7 @@ import pygame
 from pygame.locals import *
 from sys import exit
 import traceback
+from myplane import MyPlane
 
 def main():
 	pygame.mixer.pre_init()
@@ -14,6 +15,7 @@ def main():
 
 	screen = pygame.display.set_mode(bg_size)
 	pygame.display.set_caption("AircraftWar")
+	pygame.key.set_repeat(100, 100)
 
 	background = pygame.image.load('images/background.png').convert()
 
@@ -23,6 +25,8 @@ def main():
 	clock = pygame.time.Clock()
 	pygame.mixer.music.play()
 
+	me = MyPlane(bg_size)
+
 	running = True
 
 	while running:
@@ -30,7 +34,18 @@ def main():
 			if event.type == QUIT:
 				exit()
 
-		screen.blit( background,(0, 0) )
+			if event.type == KEYDOWN:
+				if event.key == K_LEFT:
+					me.moveLeft()
+				elif event.key == K_RIGHT:
+					me.moveRight()
+				elif event.key == K_UP:
+					me.moveUp()
+				elif event.key == K_DOWN:
+					me.moveDown()
+
+		screen.blit( background, (0, 0) )
+		screen.blit( me.image, me.rect )
 		clock.tick(60)
 
 		#pygame.display.flip()
