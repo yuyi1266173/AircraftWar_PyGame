@@ -14,12 +14,12 @@ class SmallEnemy(pygame.sprite.Sprite):
 		self.rect = self.image.get_rect()
 		self.moveSpace = bg_size
 		self.rect.left = randint(0, self.moveSpace[0] - self.rect.width)
-		self.rect.bottom = randint(-5*self.rect.height, 0)
+		self.rect.bottom = randint(-5*self.moveSpace[1], 0)
 		self.speed = 2
 
 	def reset(self):
 		self.rect.left = randint(0, self.moveSpace[0] - self.rect.width)
-		self.rect.bottom = randint(-5*self.rect.height, 0)
+		self.rect.bottom = randint(-5*self.moveSpace[1], 0)
 
 	def move(self):
 		if self.rect.top < self.moveSpace[1]:
@@ -37,12 +37,12 @@ class MidEnemy(pygame.sprite.Sprite):
 		self.rect = self.image.get_rect()
 		self.moveSpace = bg_size
 		self.rect.left = randint(0, self.moveSpace[0] - self.rect.width)
-		self.rect.bottom = randint(-10*self.rect.height, 0)
+		self.rect.bottom = randint(-10*self.moveSpace[1], -self.moveSpace[1])
 		self.speed = 1
 
 	def reset(self):
 		self.rect.left = randint(0, self.moveSpace[0] - self.rect.width)
-		self.rect.bottom = randint(-10*self.rect.height, 0)
+		self.rect.bottom = randint(-10*self.moveSpace[1], -self.moveSpace[1])
 
 	def move(self):
 		if self.rect.top < self.moveSpace[1]:
@@ -61,13 +61,12 @@ class BigEnemy(pygame.sprite.Sprite):
 		self.rect = self.image1.get_rect()
 		self.moveSpace = bg_size
 		self.rect.left = randint(0, self.moveSpace[0] - self.rect.width)
-		self.rect.bottom = randint(-15*self.rect.height, 0)
+		self.rect.bottom = randint(-15*self.moveSpace[1], -5 * self.moveSpace[1])
 		self.speed = 1
 
 	def reset(self):
 		self.rect.left = randint(0, self.moveSpace[0] - self.rect.width)
-		self.rect.bottom = randint(-15*self.rect.height, 0)
-
+		self.rect.bottom = randint(-15*self.moveSpace[1], -5 * self.moveSpace[1])
 	def move(self):
 		if self.rect.top < self.moveSpace[1]:
 			self.rect.top += self.speed

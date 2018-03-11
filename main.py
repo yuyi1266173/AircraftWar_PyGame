@@ -41,6 +41,9 @@ def main():
 	pygame.mixer.music.load('sound/game_music.ogg')
 	pygame.mixer.music.set_volume(0.2)
 
+	enemy3_fly_sound = pygame.mixer.Sound('sound/enemy3_flying.wav')
+	enemy3_fly_sound.set_volume(0.2)
+
 	clock = pygame.time.Clock()
 	pygame.mixer.music.play()
 
@@ -76,20 +79,31 @@ def main():
 
 		screen.blit( background, (0, 0) )
 
-		for enemy in enemies:	
-			enemy.move()
-
-			if enemy in big_enemies:
-				screen.blit(enemy.image1, enemy.rect)
-			else:
-				screen.blit(enemy.image, enemy.rect)
-
 		delay -= 1
 		
 		if not delay:
 			delay = 5
 			switch_image = not switch_image
 		
+		for enemy in big_enemies:
+			enemy.move()
+
+			if switch_image:
+				screen.blit(enemy.image1, enemy.rect)
+			else:
+				screen.blit(enemy.image2, enemy.rect)
+
+			if enemy.rect.bottom > -50:
+				enemy3_fly_sound.play()
+
+		for enemy in mid_enemies:
+			enemy.move()
+			screen.blit(enemy.image, enemy.rect)
+
+		for enemy in small_enemies:
+			enemy.move()
+			screen.blit(enemy.image, enemy.rect)
+
 		if switch_image:
 			screen.blit( me.image1, me.rect )
 		else:
