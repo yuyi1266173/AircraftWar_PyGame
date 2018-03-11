@@ -13,6 +13,16 @@ class MyPlane(pygame.sprite.Sprite):
 		self.rect.left = (self.moveSpace[0] - self.rect.width) // 2
 		self.rect.top = self.moveSpace[1] - self.rect.height
 		self.speed = 10	
+		self.active = True
+		self.destroy_times = 0
+
+		self.destroy_images = []
+		self.destroy_images.extend( [\
+			pygame.image.load('images/me_destroy_1.png').convert_alpha(),\
+			pygame.image.load('images/me_destroy_2.png').convert_alpha(),\
+			pygame.image.load('images/me_destroy_3.png').convert_alpha(),\
+			pygame.image.load('images/me_destroy_4.png').convert_alpha(),\
+			] )
 
 	def moveUp(self):
 		if self.rect.top > 0:
@@ -37,6 +47,22 @@ class MyPlane(pygame.sprite.Sprite):
 			self.rect.right += self.speed
 		else:
 			self.rect.right = self.moveSpace[0]
+
+	def reset(self):
+		self.rect.left = (self.moveSpace[0] - self.rect.width) // 2
+		self.rect.top = self.moveSpace[1] - self.rect.height
+
+	def destroy(self, screen):
+		if not (self.destroy_times % 3):
+			screen.blit( self.destroy_images[self.destroy_times//3], self.rect )
+
+			if self.destroy_times == 9:
+				self.reset()
+				self.active = True
+				self.destroy_times = 0
+
+		if not self.active:
+			self.destroy_times += 1
 
 
 

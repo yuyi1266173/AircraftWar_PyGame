@@ -16,6 +16,16 @@ class SmallEnemy(pygame.sprite.Sprite):
 		self.rect.left = randint(0, self.moveSpace[0] - self.rect.width)
 		self.rect.bottom = randint(-5*self.moveSpace[1], 0)
 		self.speed = 2
+		self.active = True
+		self.destroy_times = 0
+
+		self.destroy_images = []
+		self.destroy_images.extend( [\
+			pygame.image.load('images/enemy1_down1.png').convert_alpha(),\
+			pygame.image.load('images/enemy1_down2.png').convert_alpha(),\
+			pygame.image.load('images/enemy1_down3.png').convert_alpha(),\
+			pygame.image.load('images/enemy1_down4.png').convert_alpha(),\
+			] )
 
 	def reset(self):
 		self.rect.left = randint(0, self.moveSpace[0] - self.rect.width)
@@ -26,6 +36,18 @@ class SmallEnemy(pygame.sprite.Sprite):
 			self.rect.top += self.speed
 		else:
 			self.reset()
+
+	def destroy(self, screen):
+		if not (self.destroy_times % 3):
+			screen.blit( self.destroy_images[self.destroy_times//3], self.rect )
+
+			if self.destroy_times == 9:
+				self.reset()
+				self.active = True
+				self.destroy_times = 0
+
+		if not self.active:
+			self.destroy_times += 1
 
 
 class MidEnemy(pygame.sprite.Sprite):
@@ -39,6 +61,16 @@ class MidEnemy(pygame.sprite.Sprite):
 		self.rect.left = randint(0, self.moveSpace[0] - self.rect.width)
 		self.rect.bottom = randint(-10*self.moveSpace[1], -self.moveSpace[1])
 		self.speed = 1
+		self.active = True
+		self.destroy_times = 0
+
+		self.destroy_images = []
+		self.destroy_images.extend( [\
+			pygame.image.load('images/enemy2_down1.png').convert_alpha(),\
+			pygame.image.load('images/enemy2_down2.png').convert_alpha(),\
+			pygame.image.load('images/enemy2_down3.png').convert_alpha(),\
+			pygame.image.load('images/enemy2_down4.png').convert_alpha(),\
+			] )
 
 	def reset(self):
 		self.rect.left = randint(0, self.moveSpace[0] - self.rect.width)
@@ -49,6 +81,18 @@ class MidEnemy(pygame.sprite.Sprite):
 			self.rect.top += self.speed
 		else:
 			self.reset()
+
+	def destroy(self, screen):
+		if not (self.destroy_times % 3):
+			screen.blit( self.destroy_images[self.destroy_times//3], self.rect )
+
+			if self.destroy_times == 9:
+				self.reset()
+				self.active = True
+				self.destroy_times = 0
+
+		if not self.active:
+			self.destroy_times += 1
 
 
 class BigEnemy(pygame.sprite.Sprite):
@@ -63,6 +107,18 @@ class BigEnemy(pygame.sprite.Sprite):
 		self.rect.left = randint(0, self.moveSpace[0] - self.rect.width)
 		self.rect.bottom = randint(-15*self.moveSpace[1], -5 * self.moveSpace[1])
 		self.speed = 1
+		self.active = True
+		self.destroy_times = 0
+
+		self.destroy_images = []
+		self.destroy_images.extend( [\
+			pygame.image.load('images/enemy3_down1.png').convert_alpha(),\
+			pygame.image.load('images/enemy3_down2.png').convert_alpha(),\
+			pygame.image.load('images/enemy3_down3.png').convert_alpha(),\
+			pygame.image.load('images/enemy3_down4.png').convert_alpha(),\
+			pygame.image.load('images/enemy3_down5.png').convert_alpha(),\
+			pygame.image.load('images/enemy3_down6.png').convert_alpha(),\
+			] )
 
 	def reset(self):
 		self.rect.left = randint(0, self.moveSpace[0] - self.rect.width)
@@ -72,4 +128,16 @@ class BigEnemy(pygame.sprite.Sprite):
 			self.rect.top += self.speed
 		else:
 			self.reset()
+
+	def destroy(self, screen):
+		if not (self.destroy_times % 3):
+			screen.blit( self.destroy_images[self.destroy_times//3], self.rect )
+
+			if self.destroy_times == 15:
+				self.reset()
+				self.active = True
+				self.destroy_times = 0
+
+		if not self.active:
+			self.destroy_times += 1
 

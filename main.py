@@ -41,7 +41,18 @@ def main():
 	pygame.mixer.music.load('sound/game_music.ogg')
 	pygame.mixer.music.set_volume(0.2)
 
+	me_down_sound = pygame.mixer.Sound('sound/me_down.wav')
+	me_down_sound.set_volume(0.2)
+
+	enemy1_down_sound = pygame.mixer.Sound('sound/enemy1_down.wav')
+	enemy1_down_sound.set_volume(0.2)
+
+	enemy2_down_sound = pygame.mixer.Sound('sound/enemy2_down.wav')
+	enemy2_down_sound.set_volume(0.2)
+
 	enemy3_fly_sound = pygame.mixer.Sound('sound/enemy3_flying.wav')
+	enemy3_fly_sound.set_volume(0.2)
+	enemy3_down_sound = pygame.mixer.Sound('sound/enemy3_down.wav')
 	enemy3_fly_sound.set_volume(0.2)
 
 	clock = pygame.time.Clock()
@@ -77,6 +88,14 @@ def main():
 				elif event.key == K_DOWN:
 					me.moveDown()
 
+		enemies_down = pygame.sprite.spritecollide(me, enemies, False)
+
+		if enemies_down:
+			me.active = False
+
+			for e in enemies_down:
+				e.active = False
+
 		screen.blit( background, (0, 0) )
 
 		delay -= 1
@@ -86,28 +105,45 @@ def main():
 			switch_image = not switch_image
 		
 		for enemy in big_enemies:
-			enemy.move()
+			if enemy.active:
+				enemy.move()
 
-			if switch_image:
-				screen.blit(enemy.image1, enemy.rect)
+				if switch_image:
+					screen.blit(enemy.image1, enemy.rect)
+				else:
+					screen.blit(enemy.image2, enemy.rect)
+
+				if enemy.rect.bottom > -50:
+					enemy3_fly_sound.play()
 			else:
-				screen.blit(enemy.image2, enemy.rect)
-
-			if enemy.rect.bottom > -50:
-				enemy3_fly_sound.play()
+				enemy3_down_sound.play()
+				enemy.destroy(screen)
 
 		for enemy in mid_enemies:
-			enemy.move()
-			screen.blit(enemy.image, enemy.rect)
+			if enemy.active:
+				enemy.move()
+				screen.blit(enemy.image, enemy.rect)
+			else:
+				enemy2_down_sound.play()
+				enemy.destroy(screen)
 
 		for enemy in small_enemies:
-			enemy.move()
-			screen.blit(enemy.image, enemy.rect)
+			if enemy.active:
+				enemy.move()
+				screen.blit(enemy.image, enemy.rect)
+			else:
+				enemy1_down_sound.play()
+				enemy.destroy(screen)
 
-		if switch_image:
-			screen.blit( me.image1, me.rect )
+		if me.active:
+			if switch_image:
+				screen.blit( me.image1, me.rect )
+			else:
+				screen.blit( me.image2, me.rect )
 		else:
-			screen.blit( me.image2, me.rect )
+			me_down_sound.play()
+			me.destroy(screen)
+
 		clock.tick(60)
 
 		#pygame.display.flip()
