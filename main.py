@@ -45,7 +45,7 @@ def main():
 	enemy3_fly_sound.set_volume(0.2)
 
 	clock = pygame.time.Clock()
-	pygame.mixer.music.play()
+	pygame.mixer.music.play(-1)   #-1 cycle
 
 	me = MyPlane(bg_size)
 	
