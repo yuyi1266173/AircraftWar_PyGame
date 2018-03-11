@@ -81,6 +81,9 @@ def main():
 	switch_image = True
 	delay = 10
 
+	score = 0
+	score_font = pygame.font.Font('font/font.TTF', 36)
+
 	while running:
 		for event in pygame.event.get():
 			if event.type == QUIT:
@@ -131,6 +134,7 @@ def main():
 					for e in enemy_hit:
 						if e in mid_enemies or e in big_enemies:
 							e.energy -= 1
+							e.hit = True
 
 							if not e.energy:
 								e.active = False
@@ -141,10 +145,14 @@ def main():
 			if enemy.active:
 				enemy.move()
 
-				if switch_image:
-					screen.blit(enemy.image1, enemy.rect)
+				if enemy.hit:
+					screen.blit(enemy.image_hit, enemy.rect)
+					enemy.hit = False
 				else:
-					screen.blit(enemy.image2, enemy.rect)
+					if switch_image:
+						screen.blit(enemy.image1, enemy.rect)
+					else:
+						screen.blit(enemy.image2, enemy.rect)
 
 				pygame.draw.line(screen, (0, 0, 0),\
 				 (enemy.rect.left, enemy.rect.top-5), (enemy.rect.right, enemy.rect.top-5), 2)
@@ -160,12 +168,18 @@ def main():
 				if enemy.rect.bottom == -50:
 					enemy3_fly_sound.play()
 			else:
-				enemy.destroy(screen, enemy3_down_sound)
+				if enemy.destroy(screen, enemy3_down_sound):
+					score += 10000
 
 		for enemy in mid_enemies:
 			if enemy.active:
 				enemy.move()
-				screen.blit(enemy.image, enemy.rect)
+
+				if enemy.hit:
+					screen.blit(enemy.image_hit, enemy.rect)
+					enemy.hit = False
+				else:
+					screen.blit(enemy.image, enemy.rect)
 
 				pygame.draw.line(screen, (0, 0, 0),\
 				 (enemy.rect.left, enemy.rect.top-5), (enemy.rect.right, enemy.rect.top-5), 2)
@@ -177,14 +191,16 @@ def main():
 				pygame.draw.line(screen, energy_color, (enemy.rect.left, enemy.rect.top-5),\
 				    (enemy.rect.left+energy_remain*enemy.rect.width, enemy.rect.top-5), 2)
 			else:
-				enemy.destroy(screen, enemy2_down_sound)
+				if enemy.destroy(screen, enemy2_down_sound):
+					score += 5000
 
 		for enemy in small_enemies:
 			if enemy.active:
 				enemy.move()
 				screen.blit(enemy.image, enemy.rect)
 			else:
-				enemy.destroy(screen, enemy1_down_sound)
+				if enemy.destroy(screen, enemy1_down_sound):
+					score += 1000
 
 		if me.active:
 			if switch_image:
@@ -193,6 +209,9 @@ def main():
 				screen.blit( me.image2, me.rect )
 		else:
 			me.destroy(screen, me_down_sound)
+
+		score_text = score_font.render("Score : %s" % str(score), True, (255, 255, 255) )
+		screen.blit(score_text, (10, 5))
 
 		clock.tick(60)
 

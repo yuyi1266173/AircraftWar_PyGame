@@ -39,8 +39,11 @@ class SmallEnemy(pygame.sprite.Sprite):
 			self.reset()
 
 	def destroy(self, screen, destroy_sound):
+		add_score_flag = False
+
 		if not self.destroy_times:
 			destroy_sound.play()
+			add_score_flag = True
 
 		if not (self.destroy_times % 3):
 			screen.blit( self.destroy_images[self.destroy_times//3], self.rect )
@@ -53,6 +56,8 @@ class SmallEnemy(pygame.sprite.Sprite):
 		if not self.active:
 			self.destroy_times += 1
 
+		return add_score_flag
+
 
 class MidEnemy(pygame.sprite.Sprite):
 	energy = 8
@@ -62,6 +67,7 @@ class MidEnemy(pygame.sprite.Sprite):
 		pygame.sprite.Sprite.__init__(self)
 
 		self.image = pygame.image.load('images/enemy2.png').convert_alpha()
+		self.image_hit = pygame.image.load('images/enemy2_hit.png').convert_alpha()
 		self.rect = self.image.get_rect()
 		self.moveSpace = bg_size
 		self.rect.left = randint(0, self.moveSpace[0] - self.rect.width)
@@ -71,6 +77,7 @@ class MidEnemy(pygame.sprite.Sprite):
 		self.destroy_times = 0
 		self.mask = pygame.mask.from_surface(self.image)
 		self.energy = MidEnemy.energy
+		self.hit = False
 
 		self.destroy_images = []
 		self.destroy_images.extend( [\
@@ -94,8 +101,11 @@ class MidEnemy(pygame.sprite.Sprite):
 			self.reset()
 
 	def destroy(self, screen, destroy_sound):
+		add_score_flag = False
+
 		if not self.destroy_times:
 			destroy_sound.play()
+			add_score_flag = True
 
 		if not (self.destroy_times % 3):
 			screen.blit( self.destroy_images[self.destroy_times//3], self.rect )
@@ -105,6 +115,8 @@ class MidEnemy(pygame.sprite.Sprite):
 
 		if not self.active:
 			self.destroy_times += 1
+
+		return add_score_flag
 
 
 class BigEnemy(pygame.sprite.Sprite):
@@ -116,6 +128,7 @@ class BigEnemy(pygame.sprite.Sprite):
 
 		self.image1 = pygame.image.load('images/enemy3_n1.png').convert_alpha()
 		self.image2 = pygame.image.load('images/enemy3_n2.png').convert_alpha()
+		self.image_hit = pygame.image.load('images/enemy3_hit.png').convert_alpha()
 		self.rect = self.image1.get_rect()
 		self.moveSpace = bg_size
 		self.rect.left = randint(0, self.moveSpace[0] - self.rect.width)
@@ -125,6 +138,7 @@ class BigEnemy(pygame.sprite.Sprite):
 		self.destroy_times = 0
 		self.mask = pygame.mask.from_surface(self.image1)
 		self.energy = BigEnemy.energy
+		self.hit = False
 
 		self.destroy_images = []
 		self.destroy_images.extend( [\
@@ -150,8 +164,11 @@ class BigEnemy(pygame.sprite.Sprite):
 			self.reset()
 
 	def destroy(self, screen, destroy_sound):
+		add_score_flag = False
+
 		if not self.destroy_times:
 			destroy_sound.play()
+			add_score_flag = True
 
 		if not (self.destroy_times % 3):
 			screen.blit( self.destroy_images[self.destroy_times//3], self.rect )
@@ -161,4 +178,6 @@ class BigEnemy(pygame.sprite.Sprite):
 
 		if not self.active:
 			self.destroy_times += 1
+
+		return add_score_flag
 
