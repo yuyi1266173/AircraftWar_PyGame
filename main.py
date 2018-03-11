@@ -7,6 +7,7 @@ from sys import exit
 import traceback
 from myplane import MyPlane
 from enemy import SmallEnemy, MidEnemy, BigEnemy
+from bullet import Bullet1
 
 def add_enemies(group1, group2, type, num, bg_size):
 	if type < 0 or type > 2:
@@ -69,9 +70,16 @@ def main():
 	add_enemies(mid_enemies, enemies, 1, 4, bg_size)
 	add_enemies(big_enemies, enemies, 2, 2, bg_size)
 
+	bullet1 = []
+	bullet1_index = 0
+	BULLET1_NUM = 4
+
+	for i in range(BULLET1_NUM):
+		bullet1.append( Bullet1(me.rect.midtop) ) 
+
 	running = True
 	switch_image = True
-	delay = 5
+	delay = 10
 
 	while running:
 		for event in pygame.event.get():
@@ -101,9 +109,27 @@ def main():
 
 		delay -= 1
 		
-		if not delay:
-			delay = 5
+		if not (delay % 5):
 			switch_image = not switch_image
+
+			if not delay:
+				delay = 10
+
+				bullet1[bullet1_index].reset(me.rect.midtop)
+				bullet1_index = (bullet1_index + 1) % BULLET1_NUM
+
+		for b in bullet1:
+			if b.active:
+				b.move()
+				screen.blit(b.image, b.rect)
+
+				enemy_hit = pygame.sprite.spritecollide(b, enemies, False, pygame.sprite.collide_mask)
+
+				if enemy_hit:
+					b.active = False
+
+					for e in enemy_hit:
+						e.active = False
 		
 		for enemy in big_enemies:
 			if enemy.active:
@@ -114,27 +140,24 @@ def main():
 				else:
 					screen.blit(enemy.image2, enemy.rect)
 
-				if enemy.rect.bottom > -50:
+				if enemy.rect.bottom == -50:
 					enemy3_fly_sound.play()
 			else:
-				enemy3_down_sound.play()
-				enemy.destroy(screen)
+				enemy.destroy(screen, enemy3_down_sound)
 
 		for enemy in mid_enemies:
 			if enemy.active:
 				enemy.move()
 				screen.blit(enemy.image, enemy.rect)
 			else:
-				enemy2_down_sound.play()
-				enemy.destroy(screen)
+				enemy.destroy(screen, enemy2_down_sound)
 
 		for enemy in small_enemies:
 			if enemy.active:
 				enemy.move()
 				screen.blit(enemy.image, enemy.rect)
 			else:
-				enemy1_down_sound.play()
-				enemy.destroy(screen)
+				enemy.destroy(screen, enemy1_down_sound)
 
 		if me.active:
 			if switch_image:
@@ -142,8 +165,7 @@ def main():
 			else:
 				screen.blit( me.image2, me.rect )
 		else:
-			me_down_sound.play()
-			me.destroy(screen)
+			me.destroy(screen, me_down_sound)
 
 		clock.tick(60)
 

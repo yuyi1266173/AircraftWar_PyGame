@@ -38,7 +38,10 @@ class SmallEnemy(pygame.sprite.Sprite):
 		else:
 			self.reset()
 
-	def destroy(self, screen):
+	def destroy(self, screen, destroy_sound):
+		if not self.destroy_times:
+			destroy_sound.play()
+			
 		if not (self.destroy_times % 3):
 			screen.blit( self.destroy_images[self.destroy_times//3], self.rect )
 
@@ -84,7 +87,10 @@ class MidEnemy(pygame.sprite.Sprite):
 		else:
 			self.reset()
 
-	def destroy(self, screen):
+	def destroy(self, screen, destroy_sound):
+		if not self.destroy_times:
+			destroy_sound.play()
+
 		if not (self.destroy_times % 3):
 			screen.blit( self.destroy_images[self.destroy_times//3], self.rect )
 
@@ -132,7 +138,10 @@ class BigEnemy(pygame.sprite.Sprite):
 		else:
 			self.reset()
 
-	def destroy(self, screen):
+	def destroy(self, screen, destroy_sound):
+		if not self.destroy_times:
+			destroy_sound.play()
+
 		if not (self.destroy_times % 3):
 			screen.blit( self.destroy_images[self.destroy_times//3], self.rect )
 

@@ -53,7 +53,10 @@ class MyPlane(pygame.sprite.Sprite):
 		self.rect.left = (self.moveSpace[0] - self.rect.width) // 2
 		self.rect.top = self.moveSpace[1] - self.rect.height
 
-	def destroy(self, screen):
+	def destroy(self, screen, destroy_sound):
+		if not self.destroy_times:
+			destroy_sound.play()
+
 		if not (self.destroy_times % 3):
 			screen.blit( self.destroy_images[self.destroy_times//3], self.rect )
 
