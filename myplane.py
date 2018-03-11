@@ -15,6 +15,7 @@ class MyPlane(pygame.sprite.Sprite):
 		self.speed = 10	
 		self.active = True
 		self.destroy_times = 0
+		self.mask = pygame.mask.from_surface(self.image1)
 
 		self.destroy_images = []
 		self.destroy_images.extend( [\

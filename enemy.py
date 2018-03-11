@@ -18,6 +18,7 @@ class SmallEnemy(pygame.sprite.Sprite):
 		self.speed = 2
 		self.active = True
 		self.destroy_times = 0
+		self.mask = pygame.mask.from_surface(self.image)
 
 		self.destroy_images = []
 		self.destroy_images.extend( [\
@@ -63,6 +64,7 @@ class MidEnemy(pygame.sprite.Sprite):
 		self.speed = 1
 		self.active = True
 		self.destroy_times = 0
+		self.mask = pygame.mask.from_surface(self.image)
 
 		self.destroy_images = []
 		self.destroy_images.extend( [\
@@ -109,6 +111,7 @@ class BigEnemy(pygame.sprite.Sprite):
 		self.speed = 1
 		self.active = True
 		self.destroy_times = 0
+		self.mask = pygame.mask.from_surface(self.image1)
 
 		self.destroy_images = []
 		self.destroy_images.extend( [\

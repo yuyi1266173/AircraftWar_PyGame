@@ -88,7 +88,8 @@ def main():
 				elif event.key == K_DOWN:
 					me.moveDown()
 
-		enemies_down = pygame.sprite.spritecollide(me, enemies, False)
+		#enemies_down = pygame.sprite.spritecollide(me, enemies, False)
+		enemies_down = pygame.sprite.spritecollide(me, enemies, False, pygame.sprite.collide_mask)
 
 		if enemies_down:
 			me.active = False
