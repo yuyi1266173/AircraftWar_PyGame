@@ -129,7 +129,13 @@ def main():
 					b.active = False
 
 					for e in enemy_hit:
-						e.active = False
+						if e in mid_enemies or e in big_enemies:
+							e.energy -= 1
+
+							if not e.energy:
+								e.active = False
+						else:
+							e.active = False
 		
 		for enemy in big_enemies:
 			if enemy.active:
@@ -140,6 +146,17 @@ def main():
 				else:
 					screen.blit(enemy.image2, enemy.rect)
 
+				pygame.draw.line(screen, (0, 0, 0),\
+				 (enemy.rect.left, enemy.rect.top-5), (enemy.rect.right, enemy.rect.top-5), 2)
+				energy_remain = enemy.energy / BigEnemy.energy
+				if energy_remain > 0.2:
+					energy_color = (0, 255, 0)
+				else:
+					energy_color = (255, 0, 0)
+
+				pygame.draw.line(screen, energy_color, (enemy.rect.left, enemy.rect.top-5),\
+				    (enemy.rect.left+energy_remain*enemy.rect.width, enemy.rect.top-5), 2)
+
 				if enemy.rect.bottom == -50:
 					enemy3_fly_sound.play()
 			else:
@@ -149,6 +166,16 @@ def main():
 			if enemy.active:
 				enemy.move()
 				screen.blit(enemy.image, enemy.rect)
+
+				pygame.draw.line(screen, (0, 0, 0),\
+				 (enemy.rect.left, enemy.rect.top-5), (enemy.rect.right, enemy.rect.top-5), 2)
+				energy_remain = enemy.energy / MidEnemy.energy
+				if energy_remain > 0.2:
+					energy_color = (0, 255, 0)
+				else:
+					energy_color = (255, 0, 0)
+				pygame.draw.line(screen, energy_color, (enemy.rect.left, enemy.rect.top-5),\
+				    (enemy.rect.left+energy_remain*enemy.rect.width, enemy.rect.top-5), 2)
 			else:
 				enemy.destroy(screen, enemy2_down_sound)
 

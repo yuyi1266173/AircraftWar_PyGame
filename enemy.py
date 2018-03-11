@@ -41,7 +41,7 @@ class SmallEnemy(pygame.sprite.Sprite):
 	def destroy(self, screen, destroy_sound):
 		if not self.destroy_times:
 			destroy_sound.play()
-			
+
 		if not (self.destroy_times % 3):
 			screen.blit( self.destroy_images[self.destroy_times//3], self.rect )
 
@@ -55,6 +55,8 @@ class SmallEnemy(pygame.sprite.Sprite):
 
 
 class MidEnemy(pygame.sprite.Sprite):
+	energy = 8
+
 	def __init__(self,  bg_size):
 		#super(pygame.sprite.Sprite, self).__init__()
 		pygame.sprite.Sprite.__init__(self)
@@ -68,6 +70,7 @@ class MidEnemy(pygame.sprite.Sprite):
 		self.active = True
 		self.destroy_times = 0
 		self.mask = pygame.mask.from_surface(self.image)
+		self.energy = MidEnemy.energy
 
 		self.destroy_images = []
 		self.destroy_images.extend( [\
@@ -80,6 +83,9 @@ class MidEnemy(pygame.sprite.Sprite):
 	def reset(self):
 		self.rect.left = randint(0, self.moveSpace[0] - self.rect.width)
 		self.rect.bottom = randint(-10*self.moveSpace[1], -self.moveSpace[1])
+		self.active = True
+		self.destroy_times = 0
+		self.energy = MidEnemy.energy
 
 	def move(self):
 		if self.rect.top < self.moveSpace[1]:
@@ -96,14 +102,14 @@ class MidEnemy(pygame.sprite.Sprite):
 
 			if self.destroy_times == 9:
 				self.reset()
-				self.active = True
-				self.destroy_times = 0
 
 		if not self.active:
 			self.destroy_times += 1
 
 
 class BigEnemy(pygame.sprite.Sprite):
+	energy = 20
+
 	def __init__(self,  bg_size):
 		#super(pygame.sprite.Sprite, self).__init__()
 		pygame.sprite.Sprite.__init__(self)
@@ -118,6 +124,7 @@ class BigEnemy(pygame.sprite.Sprite):
 		self.active = True
 		self.destroy_times = 0
 		self.mask = pygame.mask.from_surface(self.image1)
+		self.energy = BigEnemy.energy
 
 		self.destroy_images = []
 		self.destroy_images.extend( [\
@@ -132,6 +139,10 @@ class BigEnemy(pygame.sprite.Sprite):
 	def reset(self):
 		self.rect.left = randint(0, self.moveSpace[0] - self.rect.width)
 		self.rect.bottom = randint(-15*self.moveSpace[1], -5 * self.moveSpace[1])
+		self.active = True
+		self.destroy_times = 0
+		self.energy = BigEnemy.energy
+
 	def move(self):
 		if self.rect.top < self.moveSpace[1]:
 			self.rect.top += self.speed
@@ -147,8 +158,6 @@ class BigEnemy(pygame.sprite.Sprite):
 
 			if self.destroy_times == 15:
 				self.reset()
-				self.active = True
-				self.destroy_times = 0
 
 		if not self.active:
 			self.destroy_times += 1
