@@ -6,6 +6,25 @@ from pygame.locals import *
 from sys import exit
 import traceback
 from myplane import MyPlane
+from enemy import SmallEnemy, MidEnemy, BigEnemy
+
+def add_enemies(group1, group2, type, num, bg_size):
+	if type < 0 or type > 2:
+		print("[add_enemies] type error! type = {}".format(type))
+		raise TypeError("[add_enemies] type error! type = {}".format(type))
+
+	while num:
+		num -= 1
+		if type == 0:
+			enemy = SmallEnemy(bg_size)
+		elif type == 1:
+			enemy = MidEnemy(bg_size)
+		else:
+			enemy = BigEnemy(bg_size)
+		
+		group1.add(enemy)
+		group2.add(enemy)
+
 
 def main():
 	pygame.mixer.pre_init()
@@ -26,8 +45,19 @@ def main():
 	pygame.mixer.music.play()
 
 	me = MyPlane(bg_size)
+	
+	enemies = pygame.sprite.Group()
+	small_enemies = pygame.sprite.Group()
+	mid_enemies = pygame.sprite.Group()
+	big_enemies = pygame.sprite.Group()
+
+	add_enemies(small_enemies, enemies, 0, 15, bg_size)
+	add_enemies(mid_enemies, enemies, 1, 4, bg_size)
+	add_enemies(big_enemies, enemies, 2, 2, bg_size)
 
 	running = True
+	switch_image = True
+	delay = 5
 
 	while running:
 		for event in pygame.event.get():
@@ -45,7 +75,25 @@ def main():
 					me.moveDown()
 
 		screen.blit( background, (0, 0) )
-		screen.blit( me.image, me.rect )
+
+		for enemy in enemies:	
+			enemy.move()
+
+			if enemy in big_enemies:
+				screen.blit(enemy.image1, enemy.rect)
+			else:
+				screen.blit(enemy.image, enemy.rect)
+
+		delay -= 1
+		
+		if not delay:
+			delay = 5
+			switch_image = not switch_image
+		
+		if switch_image:
+			screen.blit( me.image1, me.rect )
+		else:
+			screen.blit( me.image2, me.rect )
 		clock.tick(60)
 
 		#pygame.display.flip()
