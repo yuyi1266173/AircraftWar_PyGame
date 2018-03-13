@@ -112,8 +112,10 @@ def main():
 					paused = not paused
 
 					if paused:
+						paused_image = resume_pressed_image
 						pygame.mixer.music.pause()
 					else:
+						paused_image = pause_pressed_image
 						pygame.mixer.music.unpause()
 
 			elif event.type == MOUSEMOTION:
