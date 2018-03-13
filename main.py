@@ -27,6 +27,11 @@ def add_enemies(group1, group2, type, num, bg_size):
 		group2.add(enemy)
 
 
+def inc_speed(target, inc):
+	for each in target:
+		each.speed += inc
+
+
 def main():
 	pygame.mixer.pre_init()
 	pygame.init()
@@ -56,6 +61,9 @@ def main():
 	enemy3_down_sound = pygame.mixer.Sound('sound/enemy3_down.wav')
 	enemy3_fly_sound.set_volume(0.2)
 
+	upgrade_sound = pygame.mixer.Sound('sound/upgrade.wav')
+	upgrade_sound.set_volume(0.2)
+
 	clock = pygame.time.Clock()
 	pygame.mixer.music.play(-1)   #-1 cycle
 
@@ -83,6 +91,8 @@ def main():
 
 	score = 0
 	score_font = pygame.font.Font('font/font.TTF', 36)
+
+	level = 1
 
 	paused = False
 	pause_nor_image = pygame.image.load('images/pause_nor.png').convert_alpha()
@@ -250,6 +260,38 @@ def main():
 				screen.blit( me.image2, me.rect )
 		else:
 			me.destroy(screen, me_down_sound)
+
+		if level == 1 and score > 50000:
+			level = 2
+			upgrade_sound.play()
+			add_enemies(small_enemies, enemies, 0, 3, bg_size)
+			add_enemies(mid_enemies, enemies, 1, 2, bg_size)
+			add_enemies(big_enemies, enemies, 2, 1, bg_size)
+			inc_speed(small_enemies, 1)
+		elif level == 2 and score > 300000:
+			level = 3
+			upgrade_sound.play()
+			add_enemies(small_enemies, enemies, 0, 5, bg_size)
+			add_enemies(mid_enemies, enemies, 1, 3, bg_size)
+			add_enemies(big_enemies, enemies, 2, 2, bg_size)
+			inc_speed(small_enemies, 1)
+			inc_speed(mid_enemies, 1)
+		elif level == 3 and score > 600000:
+			level = 4
+			upgrade_sound.play()
+			add_enemies(small_enemies, enemies, 0, 5, bg_size)
+			add_enemies(mid_enemies, enemies, 1, 3, bg_size)
+			add_enemies(big_enemies, enemies, 2, 2, bg_size)
+			inc_speed(small_enemies, 1)
+			inc_speed(mid_enemies, 1)
+		elif level == 4 and score > 1000000:
+			level = 5
+			upgrade_sound.play()
+			add_enemies(small_enemies, enemies, 0, 5, bg_size)
+			add_enemies(mid_enemies, enemies, 1, 3, bg_size)
+			add_enemies(big_enemies, enemies, 2, 2, bg_size)
+			inc_speed(small_enemies, 1)
+			inc_speed(mid_enemies, 1)
 
 		score_text = score_font.render("Score : %s" % str(score), True, (255, 255, 255) )
 		screen.blit(score_text, (10, 5))
