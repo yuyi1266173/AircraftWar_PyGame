@@ -110,6 +110,12 @@ def main():
 			elif event.type == MOUSEBUTTONDOWN:
 				if event.button == 1 and paused_rect.collidepoint(event.pos):
 					paused = not paused
+
+					if paused:
+						pygame.mixer.music.pause()
+					else:
+						pygame.mixer.music.unpause()
+
 			elif event.type == MOUSEMOTION:
 				if paused_rect.collidepoint(event.pos):
 					if paused:
@@ -145,11 +151,17 @@ def main():
 					bullet1[bullet1_index].reset(me.rect.midtop)
 					bullet1_index = (bullet1_index + 1) % BULLET1_NUM
 
-			for b in bullet1:
-				if b.active:
-					b.move()
-					screen.blit(b.image, b.rect)
+		if paused:
+			switch_image = False
 
+		for b in bullet1:
+			if b.active:
+				if not paused:
+					b.move()
+
+				screen.blit(b.image, b.rect)
+
+				if not paused:
 					enemy_hit = pygame.sprite.spritecollide(b, enemies, False, pygame.sprite.collide_mask)
 
 					if enemy_hit:
@@ -164,78 +176,81 @@ def main():
 									e.active = False
 							else:
 								e.active = False
-			
-			for enemy in big_enemies:
-				if enemy.active:
+		
+		for enemy in big_enemies:
+			if enemy.active:
+				if not paused:
 					enemy.move()
 
-					if enemy.hit:
-						screen.blit(enemy.image_hit, enemy.rect)
-						enemy.hit = False
-					else:
-						if switch_image:
-							screen.blit(enemy.image1, enemy.rect)
-						else:
-							screen.blit(enemy.image2, enemy.rect)
-
-					pygame.draw.line(screen, (0, 0, 0),\
-					 (enemy.rect.left, enemy.rect.top-5), (enemy.rect.right, enemy.rect.top-5), 2)
-					energy_remain = enemy.energy / BigEnemy.energy
-					if energy_remain > 0.2:
-						energy_color = (0, 255, 0)
-					else:
-						energy_color = (255, 0, 0)
-
-					pygame.draw.line(screen, energy_color, (enemy.rect.left, enemy.rect.top-5),\
-					    (enemy.rect.left+energy_remain*enemy.rect.width, enemy.rect.top-5), 2)
-
-					if enemy.rect.bottom == -50:
-						enemy3_fly_sound.play()
+				if enemy.hit:
+					screen.blit(enemy.image_hit, enemy.rect)
+					enemy.hit = False
 				else:
-					if enemy.destroy(screen, enemy3_down_sound):
-						score += 10000
-
-			for enemy in mid_enemies:
-				if enemy.active:
-					enemy.move()
-
-					if enemy.hit:
-						screen.blit(enemy.image_hit, enemy.rect)
-						enemy.hit = False
+					if switch_image:
+						screen.blit(enemy.image1, enemy.rect)
 					else:
-						screen.blit(enemy.image, enemy.rect)
+						screen.blit(enemy.image2, enemy.rect)
 
-					pygame.draw.line(screen, (0, 0, 0),\
-					 (enemy.rect.left, enemy.rect.top-5), (enemy.rect.right, enemy.rect.top-5), 2)
-					energy_remain = enemy.energy / MidEnemy.energy
-					if energy_remain > 0.2:
-						energy_color = (0, 255, 0)
-					else:
-						energy_color = (255, 0, 0)
-					pygame.draw.line(screen, energy_color, (enemy.rect.left, enemy.rect.top-5),\
-					    (enemy.rect.left+energy_remain*enemy.rect.width, enemy.rect.top-5), 2)
+				pygame.draw.line(screen, (0, 0, 0),\
+				 (enemy.rect.left, enemy.rect.top-5), (enemy.rect.right, enemy.rect.top-5), 2)
+				energy_remain = enemy.energy / BigEnemy.energy
+				if energy_remain > 0.2:
+					energy_color = (0, 255, 0)
 				else:
-					if enemy.destroy(screen, enemy2_down_sound):
-						score += 5000
+					energy_color = (255, 0, 0)
 
-			for enemy in small_enemies:
-				if enemy.active:
-					enemy.move()
-					screen.blit(enemy.image, enemy.rect)
-				else:
-					if enemy.destroy(screen, enemy1_down_sound):
-						score += 1000
+				pygame.draw.line(screen, energy_color, (enemy.rect.left, enemy.rect.top-5),\
+				    (enemy.rect.left+energy_remain*enemy.rect.width, enemy.rect.top-5), 2)
 
-			if me.active:
-				if switch_image:
-					screen.blit( me.image1, me.rect )
-				else:
-					screen.blit( me.image2, me.rect )
+				if enemy.rect.bottom == -50:
+					enemy3_fly_sound.play()
 			else:
-				me.destroy(screen, me_down_sound)
+				if enemy.destroy(screen, enemy3_down_sound):
+					score += 10000
 
-			score_text = score_font.render("Score : %s" % str(score), True, (255, 255, 255) )
-			screen.blit(score_text, (10, 5))
+		for enemy in mid_enemies:
+			if enemy.active:
+				if not paused:
+					enemy.move()
+
+				if enemy.hit:
+					screen.blit(enemy.image_hit, enemy.rect)
+					enemy.hit = False
+				else:
+					screen.blit(enemy.image, enemy.rect)
+
+				pygame.draw.line(screen, (0, 0, 0),\
+				 (enemy.rect.left, enemy.rect.top-5), (enemy.rect.right, enemy.rect.top-5), 2)
+				energy_remain = enemy.energy / MidEnemy.energy
+				if energy_remain > 0.2:
+					energy_color = (0, 255, 0)
+				else:
+					energy_color = (255, 0, 0)
+				pygame.draw.line(screen, energy_color, (enemy.rect.left, enemy.rect.top-5),\
+				    (enemy.rect.left+energy_remain*enemy.rect.width, enemy.rect.top-5), 2)
+			else:
+				if enemy.destroy(screen, enemy2_down_sound):
+					score += 5000
+
+		for enemy in small_enemies:
+			if enemy.active:
+				if not paused:
+					enemy.move()
+				screen.blit(enemy.image, enemy.rect)
+			else:
+				if enemy.destroy(screen, enemy1_down_sound):
+					score += 1000
+
+		if me.active:
+			if switch_image:
+				screen.blit( me.image1, me.rect )
+			else:
+				screen.blit( me.image2, me.rect )
+		else:
+			me.destroy(screen, me_down_sound)
+
+		score_text = score_font.render("Score : %s" % str(score), True, (255, 255, 255) )
+		screen.blit(score_text, (10, 5))
 
 		screen.blit(paused_image, paused_rect)
 
