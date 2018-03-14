@@ -103,6 +103,13 @@ def main():
 	paused_rect.left, paused_rect.top = width - paused_rect.width - 10, 10
 	paused_image = pause_nor_image 
 
+	bomb_sound = pygame.mixer.Sound('sound/use_bomb.wav')
+	bomb_sound.set_volume(0.2)
+	bomb_image = pygame.image.load('images/bomb.png').convert_alpha()
+	bomb_rect = bomb_image.get_rect()
+	bomb_font = pygame.font.Font('font/font.ttf', 48)
+	bomb_num = 3
+
 	while running:
 		for event in pygame.event.get():
 			if event.type == QUIT:
@@ -117,6 +124,14 @@ def main():
 						me.moveUp()
 					elif event.key == K_DOWN:
 						me.moveDown()
+					elif event.key == K_SPACE:
+						if bomb_num:
+							bomb_num -= 1
+							bomb_sound.play()
+
+							for each in enemies:
+								if each.rect.bottom > 0:
+									each.active = False
 			elif event.type == MOUSEBUTTONDOWN:
 				if event.button == 1 and paused_rect.collidepoint(event.pos):
 					paused = not paused
@@ -295,6 +310,11 @@ def main():
 
 		score_text = score_font.render("Score : %s" % str(score), True, (255, 255, 255) )
 		screen.blit(score_text, (10, 5))
+
+		bomb_text = bomb_font.render("x %d" % bomb_num, True, (255, 255, 255) )
+		text_rect = bomb_text.get_rect()
+		screen.blit(bomb_image, (10, height - 10 - bomb_rect.height) )
+		screen.blit(bomb_text, (20 + bomb_rect.width, height - 5 - text_rect.height) )
 
 		screen.blit(paused_image, paused_rect)
 
