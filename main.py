@@ -5,9 +5,12 @@ import pygame
 from pygame.locals import *
 from sys import exit
 import traceback
+import random
+
 from myplane import MyPlane
 from enemy import SmallEnemy, MidEnemy, BigEnemy
 from bullet import Bullet1
+from supply import BulletSupply, BombSupply
 
 def add_enemies(group1, group2, type, num, bg_size):
 	if type < 0 or type > 2:
@@ -111,6 +114,17 @@ def main():
 	bomb_font = pygame.font.Font('font/font.ttf', 48)
 	bomb_num = 3
 
+	supply_sound = pygame.mixer.Sound('sound/supply.wav')
+	supply_sound.set_volume(0.2)
+	get_bomb_sound = pygame.mixer.Sound('sound/get_bomb.wav')
+	get_bomb_sound.set_volume(0.2)
+	get_bullet_sound = pygame.mixer.Sound('sound/get_bullet.wav')
+	get_bullet_sound.set_volume(0.2)
+	bomb_supply = BombSupply(bg_size)
+	bullet_supply = BulletSupply(bg_size)
+	SUPPLY_TIME = USEREVENT
+	pygame.time.set_timer(SUPPLY_TIME, 30 * 1000)
+
 	while running:
 		for event in pygame.event.get():
 			if event.type == QUIT:
@@ -133,16 +147,30 @@ def main():
 							for each in enemies:
 								if each.rect.bottom > 0:
 									each.active = False
+
+			elif event.type == SUPPLY_TIME:
+				if not paused:
+					supply_sound.play()
+
+					if random.choice( [True, False] ):
+						bomb_supply.reset()
+					else:
+						bullet_supply.reset()
+
 			elif event.type == MOUSEBUTTONDOWN:
 				if event.button == 1 and paused_rect.collidepoint(event.pos):
 					paused = not paused
 
 					if paused:
 						paused_image = resume_pressed_image
-						pygame.mixer.music.pause()
+						#pygame.mixer.music.pause()
+						pygame.mixer.pause()
+						pygame.time.set_timer(SUPPLY_TIME, 0)
 					else:
 						paused_image = pause_pressed_image
-						pygame.mixer.music.unpause()
+						#pygame.mixer.music.unpause()
+						pygame.mixer.unpause()
+						pygame.time.set_timer(SUPPLY_TIME, 30 * 1000)
 
 			elif event.type == MOUSEMOTION:
 				if paused_rect.collidepoint(event.pos):
@@ -276,6 +304,30 @@ def main():
 				screen.blit( me.image2, me.rect )
 		else:
 			me.destroy(screen, me_down_sound)
+
+		if bomb_supply.active:
+			if not paused:
+				bomb_supply.move()
+
+				if pygame.sprite.collide_mask(bomb_supply, me):
+					get_bomb_sound.play()
+					bomb_supply.active = False
+
+					if bomb_num < 3:
+						bomb_num += 1
+
+			screen.blit(bomb_supply.image, bomb_supply.rect)
+
+		if bullet_supply.active:
+			if not paused:
+				bullet_supply.move()
+
+				if pygame.sprite.collide_mask(bullet_supply, me):
+					get_bullet_sound.play()
+					bullet_supply.active = False
+
+			screen.blit(bullet_supply.image, bullet_supply.rect)
+
 
 		if level == 1 and score > 50000:
 			level = 2
