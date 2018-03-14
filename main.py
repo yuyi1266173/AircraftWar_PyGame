@@ -93,6 +93,7 @@ def main():
 	score_font = pygame.font.Font('font/font.TTF', 36)
 
 	level = 1
+	level_change_flag = 0
 
 	paused = False
 	pause_nor_image = pygame.image.load('images/pause_nor.png').convert_alpha()
@@ -278,6 +279,7 @@ def main():
 
 		if level == 1 and score > 50000:
 			level = 2
+			level_change_flag = 1
 			upgrade_sound.play()
 			add_enemies(small_enemies, enemies, 0, 3, bg_size)
 			add_enemies(mid_enemies, enemies, 1, 2, bg_size)
@@ -285,6 +287,7 @@ def main():
 			inc_speed(small_enemies, 1)
 		elif level == 2 and score > 300000:
 			level = 3
+			level_change_flag = 1
 			upgrade_sound.play()
 			add_enemies(small_enemies, enemies, 0, 5, bg_size)
 			add_enemies(mid_enemies, enemies, 1, 3, bg_size)
@@ -293,6 +296,7 @@ def main():
 			inc_speed(mid_enemies, 1)
 		elif level == 3 and score > 600000:
 			level = 4
+			level_change_flag = 1
 			upgrade_sound.play()
 			add_enemies(small_enemies, enemies, 0, 5, bg_size)
 			add_enemies(mid_enemies, enemies, 1, 3, bg_size)
@@ -301,12 +305,22 @@ def main():
 			inc_speed(mid_enemies, 1)
 		elif level == 4 and score > 1000000:
 			level = 5
+			level_change_flag = 1
 			upgrade_sound.play()
 			add_enemies(small_enemies, enemies, 0, 5, bg_size)
 			add_enemies(mid_enemies, enemies, 1, 3, bg_size)
 			add_enemies(big_enemies, enemies, 2, 2, bg_size)
 			inc_speed(small_enemies, 1)
 			inc_speed(mid_enemies, 1)
+
+		if level_change_flag > 0:
+			level_change_flag += 1
+			level_text = score_font.render("Level : %d" % level, True, (255, 0, 0) )
+			level_text_rect = level_text.get_rect()
+			screen.blit(level_text, ( (width-level_text_rect.width)//2, (height-level_text_rect.height)//2 ) )
+
+			if level_change_flag == 100:
+				level_change_flag = 0
 
 		score_text = score_font.render("Score : %s" % str(score), True, (255, 255, 255) )
 		screen.blit(score_text, (10, 5))
