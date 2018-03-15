@@ -9,7 +9,7 @@ import random
 
 from myplane import MyPlane
 from enemy import SmallEnemy, MidEnemy, BigEnemy
-from bullet import Bullet1
+from bullet import Bullet1, Bullet2
 from supply import BulletSupply, BombSupply
 
 def add_enemies(group1, group2, type, num, bg_size):
@@ -50,6 +50,10 @@ def main():
 	pygame.mixer.music.load('sound/game_music.ogg')
 	pygame.mixer.music.set_volume(0.2)
 
+	life_image = pygame.image.load('images/life.png').convert_alpha()
+	life_rect = life_image.get_rect()
+	life_num = 3
+
 	me_down_sound = pygame.mixer.Sound('sound/me_down.wav')
 	me_down_sound.set_volume(0.2)
 
@@ -81,12 +85,28 @@ def main():
 	add_enemies(mid_enemies, enemies, 1, 4, bg_size)
 	add_enemies(big_enemies, enemies, 2, 2, bg_size)
 
+	bullets = []
+	bullet_sound = pygame.mixer.Sound('sound/bullet.wav')
+	bullet_sound.set_volume(0.2)
+
 	bullet1 = []
 	bullet1_index = 0
 	BULLET1_NUM = 4
 
 	for i in range(BULLET1_NUM):
 		bullet1.append( Bullet1(me.rect.midtop) ) 
+
+	bullet2 = []
+	bullet2_index = 0
+	BULLET2_NUM = 8
+
+	for i in range(BULLET2_NUM //2):
+		bullet2.append( Bullet2( (me.rect.centerx - 33, me.rect.centery) ) )
+		bullet2.append( Bullet2( (me.rect.centerx + 30, me.rect.centery) ) )
+
+	DOUBLE_BULLET_TIME = USEREVENT + 1
+	is_double_bullet = False
+
 
 	running = True
 	switch_image = True
@@ -157,20 +177,26 @@ def main():
 					else:
 						bullet_supply.reset()
 
+			elif event.type == DOUBLE_BULLET_TIME:
+				is_double_bullet = False
+				pygame.time.set_timer(DOUBLE_BULLET_TIME, 0)
+
 			elif event.type == MOUSEBUTTONDOWN:
 				if event.button == 1 and paused_rect.collidepoint(event.pos):
 					paused = not paused
 
 					if paused:
 						paused_image = resume_pressed_image
-						#pygame.mixer.music.pause()
+						pygame.mixer.music.pause()
 						pygame.mixer.pause()
 						pygame.time.set_timer(SUPPLY_TIME, 0)
+						pygame.time.set_timer(DOUBLE_BULLET_TIME, 0)
 					else:
 						paused_image = pause_pressed_image
-						#pygame.mixer.music.unpause()
+						pygame.mixer.music.unpause()
 						pygame.mixer.unpause()
 						pygame.time.set_timer(SUPPLY_TIME, 30 * 1000)
+						pygame.time.set_timer(DOUBLE_BULLET_TIME, 18 * 1000)
 
 			elif event.type == MOUSEMOTION:
 				if paused_rect.collidepoint(event.pos):
@@ -203,14 +229,22 @@ def main():
 
 				if not delay:
 					delay = 10
+					bullet_sound.play()
 
-					bullet1[bullet1_index].reset(me.rect.midtop)
-					bullet1_index = (bullet1_index + 1) % BULLET1_NUM
+					if is_double_bullet:
+						bullets = bullet2
+						bullet2[bullet2_index].reset( (me.rect.centerx - 33, me.rect.centery) )
+						bullet2[bullet2_index + 1].reset( (me.rect.centerx + 30, me.rect.centery) )
+						bullet2_index = (bullet2_index + 2) % BULLET2_NUM
+					else:
+						bullets = bullet1
+						bullet1[bullet1_index].reset(me.rect.midtop)
+						bullet1_index = (bullet1_index + 1) % BULLET1_NUM
 
 		if paused:
 			switch_image = False
 
-		for b in bullet1:
+		for b in bullets:
 			if b.active:
 				if not paused:
 					b.move()
@@ -303,7 +337,7 @@ def main():
 			else:
 				screen.blit( me.image2, me.rect )
 		else:
-			me.destroy(screen, me_down_sound)
+			life_num = me.destroy(screen, me_down_sound, life_num)
 
 		if bomb_supply.active:
 			if not paused:
@@ -325,6 +359,8 @@ def main():
 				if pygame.sprite.collide_mask(bullet_supply, me):
 					get_bullet_sound.play()
 					bullet_supply.active = False
+					is_double_bullet = True
+					pygame.time.set_timer(DOUBLE_BULLET_TIME, 18 * 1000)
 
 			screen.blit(bullet_supply.image, bullet_supply.rect)
 
@@ -383,6 +419,12 @@ def main():
 		screen.blit(bomb_text, (20 + bomb_rect.width, height - 5 - text_rect.height) )
 
 		screen.blit(paused_image, paused_rect)
+
+		if life_num:
+			for i in range(life_num):
+				screen.blit(life_image, (width-10-(i+1)*life_rect.width, height-10-life_rect.height) )
+		else:
+			print("Game Over!!!")
 
 		clock.tick(60)
 

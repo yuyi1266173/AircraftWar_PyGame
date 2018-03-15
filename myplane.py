@@ -52,8 +52,10 @@ class MyPlane(pygame.sprite.Sprite):
 	def reset(self):
 		self.rect.left = (self.moveSpace[0] - self.rect.width) // 2
 		self.rect.top = self.moveSpace[1] - self.rect.height
+		self.active = True
+		self.destroy_times = 0
 
-	def destroy(self, screen, destroy_sound):
+	def destroy(self, screen, destroy_sound, life_num):
 		if not self.destroy_times:
 			destroy_sound.play()
 
@@ -61,12 +63,13 @@ class MyPlane(pygame.sprite.Sprite):
 			screen.blit( self.destroy_images[self.destroy_times//3], self.rect )
 
 			if self.destroy_times == 9:
+				life_num -= 1
 				self.reset()
-				self.active = True
-				self.destroy_times = 0
 
 		if not self.active:
 			self.destroy_times += 1
+
+		return life_num
 
 
 
