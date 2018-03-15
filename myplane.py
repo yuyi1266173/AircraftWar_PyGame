@@ -16,6 +16,7 @@ class MyPlane(pygame.sprite.Sprite):
 		self.active = True
 		self.destroy_times = 0
 		self.mask = pygame.mask.from_surface(self.image1)
+		self.invincible = False
 
 		self.destroy_images = []
 		self.destroy_images.extend( [\
@@ -54,8 +55,11 @@ class MyPlane(pygame.sprite.Sprite):
 		self.rect.top = self.moveSpace[1] - self.rect.height
 		self.active = True
 		self.destroy_times = 0
+		self.invincible = True
 
-	def destroy(self, screen, destroy_sound, life_num):
+	def destroy(self, screen, destroy_sound):
+		reduce_life_flag = False
+
 		if not self.destroy_times:
 			destroy_sound.play()
 
@@ -63,13 +67,13 @@ class MyPlane(pygame.sprite.Sprite):
 			screen.blit( self.destroy_images[self.destroy_times//3], self.rect )
 
 			if self.destroy_times == 9:
-				life_num -= 1
+				reduce_life_flag = True
 				self.reset()
 
 		if not self.active:
 			self.destroy_times += 1
 
-		return life_num
+		return reduce_life_flag
 
 
 

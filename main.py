@@ -145,6 +145,8 @@ def main():
 	SUPPLY_TIME = USEREVENT
 	pygame.time.set_timer(SUPPLY_TIME, 30 * 1000)
 
+	INVINCIBLE_TIME = USEREVENT + 2
+
 	while running:
 		for event in pygame.event.get():
 			if event.type == QUIT:
@@ -181,6 +183,10 @@ def main():
 				is_double_bullet = False
 				pygame.time.set_timer(DOUBLE_BULLET_TIME, 0)
 
+			elif event.type == INVINCIBLE_TIME:
+				me.invincible = False
+				pygame.time.set_timer(INVINCIBLE_TIME, 0)
+
 			elif event.type == MOUSEBUTTONDOWN:
 				if event.button == 1 and paused_rect.collidepoint(event.pos):
 					paused = not paused
@@ -216,7 +222,7 @@ def main():
 			#enemies_down = pygame.sprite.spritecollide(me, enemies, False)
 			enemies_down = pygame.sprite.spritecollide(me, enemies, False, pygame.sprite.collide_mask)
 
-			if enemies_down:
+			if enemies_down and not me.invincible:
 				me.active = False
 
 				for e in enemies_down:
@@ -337,7 +343,9 @@ def main():
 			else:
 				screen.blit( me.image2, me.rect )
 		else:
-			life_num = me.destroy(screen, me_down_sound, life_num)
+			if me.destroy(screen, me_down_sound):
+				life_num -= 1
+				pygame.time.set_timer(INVINCIBLE_TIME, 3 * 1000)
 
 		if bomb_supply.active:
 			if not paused:
