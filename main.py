@@ -147,6 +147,14 @@ def main():
 
 	INVINCIBLE_TIME = USEREVENT + 2
 
+	recorded = False
+	record_score = 0
+	gameover_font = pygame.font.Font('font/Font.ttf', 48)
+	gameover_image = pygame.image.load('images/gameover.png').convert_alpha()
+	gameover_rect = gameover_image.get_rect()
+	again_image = pygame.image.load('images/again.png').convert_alpha()
+	again_rect = again_image.get_rect()
+
 	while running:
 		for event in pygame.event.get():
 			if event.type == QUIT:
@@ -432,7 +440,60 @@ def main():
 			for i in range(life_num):
 				screen.blit(life_image, (width-10-(i+1)*life_rect.width, height-10-life_rect.height) )
 		else:
-			print("Game Over!!!")
+			#print("Game Over!!!")
+			pygame.mixer.music.stop()
+			pygame.mixer.stop()
+			paused = True
+
+			pygame.time.set_timer(SUPPLY_TIME, 0);
+
+			if not recorded:
+				recorded = True
+
+				try:
+					with open('record.txt', 'r') as f:
+						temp = f.read()
+						print(temp)
+						if temp:
+							record_score = int(temp)
+				except FileNotFoundError:
+					record_score = 0
+
+				if score > record_score:
+					with open('record.txt', 'w') as f:
+						f.write(str(score))
+
+			record_score_text = score_font.render("Best : %d" % record_score, True, (255, 255, 255) )
+			screen.blit(record_score_text, (20, 50) )
+
+			gameover_text1 = gameover_font.render("Your Socre", True, (255, 255, 255) )
+			gameover_text1_rect = gameover_text1.get_rect()
+			gameover_text1_rect.left = (width - gameover_text1_rect.width) // 2
+			gameover_text1_rect.top = height // 3
+			screen.blit(gameover_text1, gameover_text1_rect)
+
+			gameover_text2 = gameover_font.render(str(score), True, (255, 255, 255))
+			gameover_text2_rect = gameover_text2.get_rect()
+			gameover_text2_rect.left = (width - gameover_text2_rect.width) // 2
+			gameover_text2_rect.top = gameover_text1_rect.bottom + 10
+			screen.blit(gameover_text2, gameover_text2_rect)
+
+			again_rect.left = (width - again_rect.width) // 2
+			again_rect.top = gameover_text2_rect.bottom + 50
+			screen.blit(again_image, again_rect)
+
+			gameover_rect.left = (width - again_rect.width) // 2
+			gameover_rect.top = again_rect.bottom + 10
+			screen.blit(gameover_image, gameover_rect)
+
+			if pygame.mouse.get_pressed()[0]:
+				pos = pygame.mouse.get_pos()
+
+				if again_rect.left < pos[0] < again_rect.right and again_rect.top < pos[1] < again_rect.bottom:
+					main()
+				elif gameover_rect.left < pos[0] < gameover_rect.right and gameover_rect.top < pos[1] < gameover_rect.bottom:
+					pygame.quit()
+					exit()
 
 		clock.tick(60)
 
